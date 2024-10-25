@@ -110,5 +110,5 @@ The output will include:
 - Manager fee distribution
 - Input validation for all transactions
 
-## Note
-This contract is designed for educational purposes. For production use, additional security audits and optimizations are recommended.
+## Author
+Bhuwan Bhandari
