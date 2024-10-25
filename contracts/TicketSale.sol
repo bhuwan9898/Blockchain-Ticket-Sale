@@ -17,8 +17,8 @@ contract TicketSale {
     // Initializes the contract with the number of tickets and their price
     constructor(uint256 numTickets, uint256 price) {
         manager = msg.sender;
-        ticketPrice = price;
         totalTickets = numTickets;
+        ticketPrice = price;
     }
 
     // Allows a user to purchase a ticket
