@@ -39,28 +39,42 @@ contract TicketSale {
 
     // Allows a user to offer their ticket for swap with another specific ticket
     function offerSwap(uint256 ticketId) public {
-        require(ticketOwners[msg.sender] != 0, "You don't own a ticket");
-        require(tickets[ticketId].owner != address(0), "Target ticket not sold");
-        require(tickets[ticketId].owner != msg.sender, "Cannot swap with yourself");
+    require(ticketOwners[msg.sender] != 0, "You don't own a ticket");
+    require(tickets[ticketId].owner != address(0), "Target ticket not sold");
+    require(tickets[ticketId].owner != msg.sender, "Cannot swap with yourself");
 
-        swapOffers[msg.sender][tickets[ticketId].owner] = ticketOwners[msg.sender];
+    uint256 myTicketId = ticketOwners[msg.sender];
+    address targetOwner = tickets[ticketId].owner;
+    
+    swapOffers[msg.sender][targetOwner] = myTicketId;
+}
+
+   function acceptSwap(uint256 myTicketId) public {
+    require(ticketOwners[msg.sender] == myTicketId, "You don't own this ticket");
+    
+    address swapPartner;
+    uint256 offeredTicketId = 0;
+    
+    // Find the swap partner and offered ticket
+    for (uint256 i = 1; i <= totalTickets; i++) {
+        if (swapOffers[tickets[i].owner][msg.sender] != 0) {
+            swapPartner = tickets[i].owner;
+            offeredTicketId = swapOffers[swapPartner][msg.sender];
+            break;
+        }
     }
+    
+    require(offeredTicketId != 0, "No swap offer for you");
 
-    // Allows a user to accept a swap offer for their ticket
-    function acceptSwap(uint256 ticketId) public {
-        require(ticketOwners[msg.sender] == ticketId, "You don't own this ticket");
-        address swapPartner = tickets[swapOffers[tickets[ticketId].owner][msg.sender]].owner;
-        require(swapOffers[swapPartner][msg.sender] != 0, "No swap offer for you");
+    // Perform the swap
+    tickets[myTicketId].owner = swapPartner;
+    tickets[offeredTicketId].owner = msg.sender;
+    ticketOwners[msg.sender] = offeredTicketId;
+    ticketOwners[swapPartner] = myTicketId;
 
-        uint256 partnerTicketId = swapOffers[swapPartner][msg.sender];
-        
-        tickets[ticketId].owner = swapPartner;
-        tickets[partnerTicketId].owner = msg.sender;
-        ticketOwners[msg.sender] = partnerTicketId;
-        ticketOwners[swapPartner] = ticketId;
-
-        delete swapOffers[swapPartner][msg.sender];
-    }
+    // Clear the swap offer
+    delete swapOffers[swapPartner][msg.sender];
+}
 
     // Allows a user to put their ticket up for resale at a specified price
     function resaleTicket(uint256 price) public {

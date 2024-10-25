@@ -58,10 +58,10 @@ describe("ticketSale", () => {
 
   it("offers ticket swap", async () => {
     // create two buyers who will swap tickets
-    const buyer1 = accounts[1];
-    const buyer2 = accounts[2];
-    const ticket1Id = 1;
-    const ticket2Id = 2;
+    const buyer1 = accounts[2];
+    const buyer2 = accounts[3];
+    const ticket1Id = 2;
+    const ticket2Id = 3;
 
     // both users will buy a ticket with value 100(since I have set the price of each ticket to be 100)
     await ticketSale.methods.buyTicket(ticket1Id).send({ from: buyer1, value: 100 });
@@ -96,16 +96,67 @@ describe("ticketSale", () => {
     );
   });
 
-  // it("accepts swap", () => {
+  it("accepts ticket swap offer", async () => {
+    const buyer1 = accounts[4];
+    const buyer2 = accounts[5];
+    const ticket1Id = 4;
+    const ticket2Id = 5;
+   
+    // Two buyers will buy tickets first
+    await ticketSale.methods.buyTicket(ticket1Id).send( { from: buyer1, value: 100});
+    await ticketSale.methods.buyTicket(ticket2Id).send( { from: buyer2, value: 100 });
+    
+    const buyer1InitialTicket = parseInt(await ticketSale.methods.getTicketOf(buyer1).call());
+    const buyer2InitialTicket = parseInt(await ticketSale.methods.getTicketOf(buyer2).call());
+    // console.log("Initial Ticket-Buyer1: ", buyer1InitialTicket);
+    // console.log("Initial Ticket-Buyer2: ", buyer2InitialTicket);
+    
+    // buyer1 offers to swap their ticket with buyer2's ticket
+    await ticketSale.methods.offerSwap(ticket2Id).send({ from: buyer1 });
 
-  // });
-  // it("resales ticket", () => {
+    //buyer2 will accept the swap offer
+    await ticketSale.methods.acceptSwap(ticket2Id).send( { from: buyer2 });
+    
+    // // Verify that the tickets have been swapped
+    const buyer1NewTicket = parseInt(await ticketSale.methods.getTicketOf(buyer1).call());
+    const buyer2NewTicket = parseInt(await ticketSale.methods.getTicketOf(buyer2).call());
+    //console.log("New Ticket-Buyer1: ", buyer1NewTicket);
+    //console.log("New Ticket-Buyer2: ", buyer2NewTicket);
+    assert.equal(buyer1NewTicket, ticket2Id, "Buyer1 should now own ticket2");
+    assert.equal(buyer2NewTicket, ticket1Id, "Buyer2 should now own ticket1");
+});
 
-  // });
+it("allows user to put ticket up for resale", async () => {
+  const buyer = accounts[6];
+  const ticketId = 6;
+  const initialPrice =100;
+  const resalePrice = 120;
+
+  // First, let's have the user buy a ticket
+  await ticketSale.methods.buyTicket(ticketId).send( { from: buyer, value: initialPrice });
+
+  // Verify initial ticket ownership and price
+  const initialOwner = parseInt(await ticketSale.methods.getTicketOf(buyer).call());
+  assert.equal(initialOwner, ticketId, "Buyer should own the ticket initially");
+
+  // // Put the ticket up for resale
+  await ticketSale.methods.resaleTicket(resalePrice).send( { from: buyer });
+
+  // // Verify the ticket is now for sale at the new price
+  const resaleTicketDetails = await ticketSale.methods.tickets(ticketId).call();
+  assert.equal(resaleTicketDetails.price, resalePrice, "Resale price should be updated");
+  assert.equal(resaleTicketDetails.forSale, true, "Ticket should be marked for sale");
+
+
+  // Check if the ticket appears in the resale list
+  const resaleList = await ticketSale.methods.checkResale().call();
+  // console.log(resaleList); 
+  //I did toString() because initially in the array the ticketId and price are srored as strings
+  assert(resaleList.includes(ticketId.toString()), "Ticket should appear in the resale list");
+});
+
   // it("accepts resale ticket", () => {
 
   // });
-  // it("checks resale tickets", () => {
 
-  // });
 });
