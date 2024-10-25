@@ -15,17 +15,17 @@ contract TicketSale {
     mapping(address => mapping(address => uint256)) public swapOffers;
 
     // Initializes the contract with the number of tickets and their price
+    // The sender is the manager
     constructor(uint256 numTickets, uint256 price) {
         manager = msg.sender;
         ticketPrice = price;
-        totalTickets = numTickets;
-    }
+        totalTickets = numTickets;    }
 
     // Allows a user to purchase a ticket
     function buyTicket(uint256 ticketId) public payable {
         require(ticketId > 0 && ticketId <= totalTickets, "Invalid ticket ID");
         require(tickets[ticketId].owner == address(0), "Ticket already sold");
-        require(ticketOwners[msg.sender] == 0, "You already own a ticket");
+        require(ticketOwners[msg.sender] == 0, "You already own a ticket"); //checks if the sender has the ticket 
         require(msg.value == ticketPrice, "Incorrect payment amount");
 
         tickets[ticketId].owner = msg.sender;
