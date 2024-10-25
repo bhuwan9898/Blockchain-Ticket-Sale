@@ -1,10 +1,13 @@
-const path = require('path');
-const fs = require('fs');
-const solc = require('solc');
+const path = require("path");
+const fs = require("fs");
+const solc = require("solc");
 
-
-const ticketsalePath = path.resolve(__dirname, '../contracts', 'TicketSale.sol');
-const source = fs.readFileSync(ticketsalePath, 'utf8');
+const ticketsalePath = path.resolve(
+  __dirname,
+  "../contracts",
+  "TicketSale.sol"
+);
+const source = fs.readFileSync(ticketsalePath, "utf8");
 //console.log(source);
 let input = {
   language: "Solidity",
@@ -22,22 +25,22 @@ let input = {
   },
 };
 
-const stringInput=JSON.stringify(input);
+const stringInput = JSON.stringify(input);
 // console.log(stringInput);
 
-const compiledCode=solc.compile(stringInput);
+const compiledCode = solc.compile(stringInput);
 // console.log(compiledCode);
 
-const output =JSON.parse(compiledCode);
-const contractOutput=output.contracts;
+const output = JSON.parse(compiledCode);
+const contractOutput = output.contracts;
 // console.log(contractOutput);
 
-const ticketSaleOutput=contractOutput["TicketSale.sol"];
+const ticketSaleOutput = contractOutput["TicketSale.sol"];
 // console.log(ticketsaleOutput);
 
-const ticketSaleABI=ticketSaleOutput.TicketSale.abi;
+const ticketSaleABI = ticketSaleOutput.TicketSale.abi;
 // console.log(ticketsaleABI);
 
-const ticketSaleBytecode=ticketSaleOutput.TicketSale.evm.bytecode;
+const ticketSaleBytecode = ticketSaleOutput.TicketSale.evm.bytecode;
 // console.log(ticketsaleBytecode);
-module.exports= {"abi":ticketSaleABI,"bytecode":ticketSaleBytecode.object};
+module.exports = { abi: ticketSaleABI, bytecode: ticketSaleBytecode.object };
