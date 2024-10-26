@@ -36,11 +36,11 @@ const contractOutput = output.contracts;
 // console.log(contractOutput);
 
 const ticketSaleOutput = contractOutput["TicketSale.sol"];
-// console.log(ticketsaleOutput);
+// console.log(ticketSaleOutput);
 
 const ticketSaleABI = ticketSaleOutput.TicketSale.abi;
-// console.log(ticketsaleABI);
+//console.log(ticketSaleABI);
 
 const ticketSaleBytecode = ticketSaleOutput.TicketSale.evm.bytecode;
-// console.log(ticketsaleBytecode);
+// console.log(ticketSaleBytecode);
 module.exports = { abi: ticketSaleABI, bytecode: ticketSaleBytecode.object };
