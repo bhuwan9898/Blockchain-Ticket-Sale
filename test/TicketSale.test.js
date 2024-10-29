@@ -47,7 +47,6 @@ describe("ticketSale", () => {
     );
 
     //check if the owner of this ticket is the buyer
-
     const buyerTicket = await ticketSale.methods.tickets(ticketId).call();
     assert.equal(
       buyerTicket.owner,
@@ -57,7 +56,7 @@ describe("ticketSale", () => {
   });
 
   it("offers ticket swap", async () => {
-    // create two buyers who will swap tickets
+    //create two buyers who will swap tickets
     const buyer1 = accounts[2];
     const buyer2 = accounts[3];
     const ticket1Id = 2;
