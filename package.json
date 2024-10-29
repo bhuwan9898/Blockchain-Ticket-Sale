@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/bhuwan9898/Blockchain-Ticket-Sale#readme",
   "dependencies": {
+    "@truffle/hdwallet-provider": "^2.1.15",
     "ganache-cli": "^6.12.2",
     "mocha": "^10.7.3",
     "solc": "^0.8.17",
